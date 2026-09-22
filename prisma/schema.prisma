@@ -1,0 +1,35 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Voter {
+  id              String   @id @default(cuid())
+  serial_no       String
+  gender          String   // 'female' | 'male' | 'other'
+  name            String
+  voter_id        String   @unique
+  father_name     String   @default("")
+  mother_name     String   @default("")
+  occupation      String   @default("")
+  date_of_birth   String   @default("")
+  address         String
+  district        String
+  upazila         String
+  union           String   @default("")
+  ward_number     String   @default("1")
+  voter_area      String   @default("")
+  voter_area_code String   @default("")
+  status          String   @default("active") // 'active' | 'inactive' | 'deceased' | 'transferred'
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  @@index([name])
+  @@index([voter_id])
+  @@index([district, upazila])
+  @@index([voter_area_code])
+}
