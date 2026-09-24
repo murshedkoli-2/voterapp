@@ -220,15 +220,15 @@ export const BackupView: React.FC<BackupViewProps> = ({
         </div>
       </div>
 
-      {/* Danger Zone: Factory Reset */}
+      {/* Danger Zone: Clear Registry */}
       <div className="card" style={{ padding: '1.15rem', border: '1px solid #fecaca', background: 'var(--bg-surface)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '1rem' }}>
           <div>
             <h3 style={{ fontSize: '0.95rem', fontWeight: 600, color: 'var(--danger)' }}>
-              Reset System to Seed Data
+              Clear Voter Registry
             </h3>
             <p style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', marginTop: '0.15rem' }}>
-              Restores the default seed voter dataset in the database.
+              Completely empties all voters from database. Use with caution before importing new voter files.
             </p>
           </div>
 
@@ -236,14 +236,14 @@ export const BackupView: React.FC<BackupViewProps> = ({
             type="button"
             className="btn btn-danger"
             onClick={() => {
-              if (confirm('Are you sure you want to reset the database to initial seed voter data? Current modifications will be replaced.')) {
+              if (confirm('Are you sure you want to completely clear the voter registry? All current voters will be removed from database.')) {
                 onResetToDefault();
-                setStatusMsg({ type: 'success', message: 'Successfully reset database to seed voter dataset.' });
+                setStatusMsg({ type: 'success', message: 'Successfully cleared all voter records from database.' });
               }
             }}
           >
             <RefreshCw size={14} />
-            <span>Factory Reset</span>
+            <span>Clear Database</span>
           </button>
         </div>
       </div>

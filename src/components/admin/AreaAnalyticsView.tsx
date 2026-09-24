@@ -63,13 +63,36 @@ export const AreaAnalyticsView: React.FC<AreaAnalyticsViewProps> = ({
       </div>
 
       {/* District & Upazila Accordion/Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1rem' }}>
-        {Object.entries(areaTree).map(([district, upazilas]) => {
-          const districtTotal = Object.values(upazilas).reduce((acc, list) => acc + list.length, 0);
-          const districtPct = totalVoters > 0 ? Math.round((districtTotal / totalVoters) * 100) : 0;
+      {Object.keys(areaTree).length === 0 ? (
+        <div className="card" style={{ padding: '3.5rem 1.5rem', textAlign: 'center', background: 'var(--bg-surface)' }}>
+          <div style={{
+            width: '48px',
+            height: '48px',
+            borderRadius: '50%',
+            background: 'var(--bg-subtle)',
+            color: 'var(--text-muted)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            margin: '0 auto 0.85rem',
+          }}>
+            <Building2 size={22} />
+          </div>
+          <h3 style={{ fontSize: '1.05rem', fontWeight: 600, color: 'var(--text-primary)' }}>
+            No area demographics yet
+          </h3>
+          <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', marginTop: '0.25rem' }}>
+            Import your voter datasets to view electoral breakdown across districts, upazilas, and wards.
+          </p>
+        </div>
+      ) : (
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(360px, 1fr))', gap: '1rem' }}>
+          {Object.entries(areaTree).map(([district, upazilas]) => {
+            const districtTotal = Object.values(upazilas).reduce((acc, list) => acc + list.length, 0);
+            const districtPct = totalVoters > 0 ? Math.round((districtTotal / totalVoters) * 100) : 0;
 
-          return (
-            <div key={district} className="card" style={{ padding: '1.25rem' }}>
+            return (
+              <div key={district} className="card" style={{ padding: '1.25rem' }}>
               {/* District Title */}
               <div style={{
                 display: 'flex',
@@ -193,7 +216,8 @@ export const AreaAnalyticsView: React.FC<AreaAnalyticsViewProps> = ({
             </div>
           );
         })}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

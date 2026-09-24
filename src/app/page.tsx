@@ -18,7 +18,6 @@ import { VoterIdCardModal } from '../components/VoterIdCardModal';
 import { DeleteConfirmModal } from '../components/DeleteConfirmModal';
 import { ExportImportModal } from '../components/ExportImportModal';
 import { JsonDataImporterModal, ImportMode } from '../components/importer/JsonDataImporterModal';
-import { INITIAL_VOTERS } from '../data/initialVoters';
 import { VoterRecord, VoterFilterState, SortField, SortOrder } from '../types/voter';
 import { filterVoters, sortVoters } from '../utils/search';
 
@@ -27,7 +26,7 @@ const STORAGE_KEY = 'ec_voter_registry_v1';
 function AdminDashboardContent() {
   const { isAuthenticated, isInitialized } = useAuth();
 
-  const [voters, setVoters] = useState<VoterRecord[]>(INITIAL_VOTERS);
+  const [voters, setVoters] = useState<VoterRecord[]>([]);
   const [currentTab, setCurrentTab] = useState<AdminTab>('voters');
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -61,7 +60,7 @@ function AdminDashboardContent() {
     try {
       const res = await fetch('/api/voters');
       const json = await res.json();
-      if (json.success && Array.isArray(json.data) && json.data.length > 0) {
+      if (json.success && Array.isArray(json.data)) {
         setVoters(json.data);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(json.data));
         return;
@@ -74,7 +73,7 @@ function AdminDashboardContent() {
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed) && parsed.length > 0) {
+        if (Array.isArray(parsed)) {
           setVoters(parsed);
         }
       }
@@ -284,11 +283,12 @@ function AdminDashboardContent() {
     } catch (err) {
       console.error('Failed to reset Neon DB', err);
     }
-    persistVoters(INITIAL_VOTERS);
+    persistVoters([]);
   };
 
   // Next available serial number suggestion
   const nextSerial = useMemo(() => {
+    if (voters.length === 0) return '0001';
     const maxSerial = voters.reduce((max, v) => {
       const num = parseInt(v.serial_no, 10);
       return !isNaN(num) && num > max ? num : max;

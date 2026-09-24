@@ -181,25 +181,31 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
           </p>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: '0.85rem' }}>
-            {districtsSorted.slice(0, 5).map(([dist, count]) => {
-              const pct = total ? Math.round((count / total) * 100) : 0;
-              return (
-                <div key={dist}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: '0.825rem', marginBottom: '0.3rem' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
-                      <MapPin size={12} color="var(--primary-green)" />
-                      <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{dist}</span>
+            {districtsSorted.length === 0 ? (
+              <div style={{ padding: '1.5rem 0', textAlign: 'center', color: 'var(--text-muted)', fontSize: '0.825rem' }}>
+                No regional voter data available yet.
+              </div>
+            ) : (
+              districtsSorted.slice(0, 5).map(([dist, count]) => {
+                const pct = total ? Math.round((count / total) * 100) : 0;
+                return (
+                  <div key={dist}>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline', fontSize: '0.825rem', marginBottom: '0.3rem' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '0.4rem' }}>
+                        <MapPin size={12} color="var(--primary-green)" />
+                        <span style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{dist}</span>
+                      </div>
+                      <div className="font-mono" style={{ color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
+                        <strong>{count}</strong> ({pct}%)
+                      </div>
                     </div>
-                    <div className="font-mono" style={{ color: 'var(--text-secondary)', fontSize: '0.78rem' }}>
-                      <strong>{count}</strong> ({pct}%)
+                    <div style={{ height: '6px', background: 'var(--bg-subtle)', borderRadius: '999px', overflow: 'hidden' }}>
+                      <div style={{ width: `${pct}%`, height: '100%', background: 'var(--primary-green)', borderRadius: '999px' }} />
                     </div>
                   </div>
-                  <div style={{ height: '6px', background: 'var(--bg-subtle)', borderRadius: '999px', overflow: 'hidden' }}>
-                    <div style={{ width: `${pct}%`, height: '100%', background: 'var(--primary-green)', borderRadius: '999px' }} />
-                  </div>
-                </div>
-              );
-            })}
+                );
+              })
+            )}
           </div>
         </div>
       </div>
@@ -270,67 +276,75 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
                 </tr>
               </thead>
               <tbody>
-                {recentVoters.map((voter) => (
-                  <tr key={voter.voter_id || voter.serial_no}>
-                    {/* Serial */}
-                    <td className="font-mono" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
-                      #{voter.serial_no}
-                    </td>
-
-                    {/* Name & NID */}
-                    <td>
-                      <div>
-                        <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem' }}>
-                          {voter.name}
-                        </div>
-                        <div className="nid-link-mono" style={{ marginTop: '0.15rem' }}>
-                          NID: {voter.voter_id}
-                        </div>
-                      </div>
-                    </td>
-
-                    {/* Gender & Occupation */}
-                    <td>
-                      <div style={{ color: 'var(--text-primary)', fontSize: '0.825rem' }}>
-                        {voter.occupation || '—'}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'capitalize', marginTop: '0.1rem' }}>
-                        {voter.gender} • DOB {voter.date_of_birth}
-                      </div>
-                    </td>
-
-                    {/* Address */}
-                    <td>
-                      <div style={{ color: 'var(--text-primary)', fontSize: '0.825rem' }}>
-                        {voter.address || voter.union}
-                      </div>
-                      <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
-                        {voter.upazila}, {voter.district} (Ward {voter.ward_number})
-                      </div>
-                    </td>
-
-                    {/* Status */}
-                    <td>{getStatusBadge(voter.status)}</td>
-
-                    {/* Action */}
-                    <td style={{ textAlign: 'right' }}>
-                      <button
-                        type="button"
-                        className="btn btn-secondary"
-                        onClick={() => onViewCard(voter)}
-                        style={{
-                          height: '28px',
-                          padding: '0 0.6rem',
-                          fontSize: '0.75rem',
-                        }}
-                        title="View Official Smart NID Card"
-                      >
-                        <IdCard size={13} color="var(--primary-green)" />
-                        <span>Card</span>
-                      </button>
+                {recentVoters.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} style={{ textAlign: 'center', padding: '2.5rem 1rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+                      No registered voters in registry. Import data or create new records.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  recentVoters.map((voter) => (
+                    <tr key={voter.voter_id || voter.serial_no}>
+                      {/* Serial */}
+                      <td className="font-mono" style={{ color: 'var(--text-secondary)', fontSize: '0.8rem' }}>
+                        #{voter.serial_no}
+                      </td>
+
+                      {/* Name & NID */}
+                      <td>
+                        <div>
+                          <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+                            {voter.name}
+                          </div>
+                          <div className="nid-link-mono" style={{ marginTop: '0.15rem' }}>
+                            NID: {voter.voter_id}
+                          </div>
+                        </div>
+                      </td>
+
+                      {/* Gender & Occupation */}
+                      <td>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '0.825rem' }}>
+                          {voter.occupation || '—'}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', textTransform: 'capitalize', marginTop: '0.1rem' }}>
+                          {voter.gender} • DOB {voter.date_of_birth}
+                        </div>
+                      </td>
+
+                      {/* Address */}
+                      <td>
+                        <div style={{ color: 'var(--text-primary)', fontSize: '0.825rem' }}>
+                          {voter.address || voter.union}
+                        </div>
+                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.1rem' }}>
+                          {voter.upazila}, {voter.district} (Ward {voter.ward_number})
+                        </div>
+                      </td>
+
+                      {/* Status */}
+                      <td>{getStatusBadge(voter.status)}</td>
+
+                      {/* Action */}
+                      <td style={{ textAlign: 'right' }}>
+                        <button
+                          type="button"
+                          className="btn btn-secondary"
+                          onClick={() => onViewCard(voter)}
+                          style={{
+                            height: '28px',
+                            padding: '0 0.6rem',
+                            fontSize: '0.75rem',
+                          }}
+                          title="View Official Smart NID Card"
+                        >
+                          <IdCard size={13} color="var(--primary-green)" />
+                          <span>Card</span>
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -338,48 +352,54 @@ export const OverviewView: React.FC<OverviewViewProps> = ({
 
         {/* Mobile Presentation: Clean Cards Feed */}
         <div className="recent-voters-mobile">
-          {recentVoters.map((voter) => (
-            <div
-              key={voter.voter_id || voter.serial_no}
-              style={{
-                background: 'var(--bg-surface)',
-                border: '1px solid var(--border-subtle)',
-                borderRadius: '8px',
-                padding: '0.85rem',
-              }}
-            >
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
-                <div>
-                  <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem' }}>
-                    {voter.name}
-                  </div>
-                  <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                    #{voter.serial_no} · NID: {voter.voter_id}
-                  </div>
-                </div>
-
-                {getStatusBadge(voter.status)}
-              </div>
-
-              <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.65rem' }}>
-                {voter.upazila}, {voter.district} (Ward {voter.ward_number})
-              </div>
-
-              <button
-                type="button"
-                className="btn btn-secondary"
-                onClick={() => onViewCard(voter)}
+          {recentVoters.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '1.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              No registered voters in registry.
+            </div>
+          ) : (
+            recentVoters.map((voter) => (
+              <div
+                key={voter.voter_id || voter.serial_no}
                 style={{
-                  width: '100%',
-                  height: '32px',
-                  fontSize: '0.78rem',
+                  background: 'var(--bg-surface)',
+                  border: '1px solid var(--border-subtle)',
+                  borderRadius: '8px',
+                  padding: '0.85rem',
                 }}
               >
-                <IdCard size={13} color="var(--primary-green)" />
-                <span>View Smart NID Card</span>
-              </button>
-            </div>
-          ))}
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '0.45rem' }}>
+                  <div>
+                    <div style={{ fontWeight: 600, color: 'var(--text-primary)', fontSize: '0.875rem' }}>
+                      {voter.name}
+                    </div>
+                    <div className="font-mono" style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      #{voter.serial_no} · NID: {voter.voter_id}
+                    </div>
+                  </div>
+
+                  {getStatusBadge(voter.status)}
+                </div>
+
+                <div style={{ fontSize: '0.78rem', color: 'var(--text-secondary)', marginBottom: '0.65rem' }}>
+                  {voter.upazila}, {voter.district} (Ward {voter.ward_number})
+                </div>
+
+                <button
+                  type="button"
+                  className="btn btn-secondary"
+                  onClick={() => onViewCard(voter)}
+                  style={{
+                    width: '100%',
+                    height: '32px',
+                    fontSize: '0.78rem',
+                  }}
+                >
+                  <IdCard size={13} color="var(--primary-green)" />
+                  <span>View Smart NID Card</span>
+                </button>
+              </div>
+            ))
+          )}
         </div>
       </div>
     </div>

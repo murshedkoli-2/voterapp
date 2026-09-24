@@ -1,10 +1,9 @@
 import { NextResponse } from 'next/server';
-import { seedInitialVoters, getAllVoters, batchImportVoters } from '../../../../lib/db';
-import { INITIAL_VOTERS } from '../../../../data/initialVoters';
+import { clearAllVoters, getAllVoters } from '../../../../lib/db';
 
 export async function POST() {
   try {
-    await batchImportVoters(INITIAL_VOTERS, 'replace');
+    await clearAllVoters();
     const voters = await getAllVoters();
     return NextResponse.json({ success: true, data: voters });
   } catch (error) {

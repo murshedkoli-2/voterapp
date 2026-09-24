@@ -237,7 +237,7 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
             </button>
           </div>
 
-          {/* Reset to Default */}
+          {/* Clear Registry */}
           <div style={{
             padding: '1rem',
             background: 'rgba(239, 68, 68, 0.04)',
@@ -251,25 +251,25 @@ export const ExportImportModal: React.FC<ExportImportModalProps> = ({
           }}>
             <div>
               <h4 style={{ fontSize: '0.9rem', fontWeight: 600, color: '#ffffff' }}>
-                Reset to Default Sample Data
+                Clear All Voter Records
               </h4>
               <p style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
-                Restore initial seed sample data in database?
+                Remove all registered voter records from database
               </p>
             </div>
             <button
               type="button"
               className="btn btn-secondary"
               onClick={() => {
-                if (confirm('Are you sure you want to reset the database to default sample data?')) {
+                if (confirm('Are you sure you want to remove all voter records from the database?')) {
                   onResetToDefault();
-                  setImportStatus({ type: 'success', message: 'Default seed voter dataset restored successfully' });
+                  setImportStatus({ type: 'success', message: 'All voter records cleared from database' });
                 }
               }}
-              style={{ color: '#fbbf24' }}
+              style={{ color: '#ef4444' }}
             >
               <RefreshCw size={14} />
-              <span>Reset Data</span>
+              <span>Clear Data</span>
             </button>
           </div>
         </div>

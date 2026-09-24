@@ -1,6 +1,5 @@
 import { neon } from '@neondatabase/serverless';
 import { VoterRecord } from '../types/voter';
-import { INITIAL_VOTERS } from '../data/initialVoters';
 
 const databaseUrl = process.env.DATABASE_URL || "postgresql://neondb_owner:npg_vUm4DcR6xOYE@ep-twilight-tree-b40lyeqk-pooler.c-6.us-east-2.aws.neon.tech/neondb?sslmode=require";
 
@@ -75,15 +74,6 @@ export async function getAllVoters(): Promise<VoterRecord[]> {
   const rows = await sql`
     SELECT * FROM voters ORDER BY serial_no ASC, created_at DESC;
   `;
-
-  // Auto-seed if empty
-  if (rows.length === 0) {
-    await seedInitialVoters();
-    const seededRows = await sql`
-      SELECT * FROM voters ORDER BY serial_no ASC, created_at DESC;
-    `;
-    return seededRows.map(mapRowToVoter);
-  }
 
   return rows.map(mapRowToVoter);
 }
@@ -194,10 +184,12 @@ export async function batchImportVoters(records: VoterRecord[], mode: 'merge' | 
   return { count };
 }
 
-export async function seedInitialVoters(): Promise<void> {
+export async function clearAllVoters(): Promise<boolean> {
   await initVotersTable();
+  await sql`TRUNCATE TABLE voters RESTART IDENTITY;`;
+  return true;
+}
 
-  for (const voter of INITIAL_VOTERS) {
-    await createVoter(voter);
-  }
+export async function seedInitialVoters(): Promise<void> {
+  // No default seed voters - registry starts empty
 }
